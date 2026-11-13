@@ -1,8 +1,8 @@
 # mucsi-ml-animal-shelter-project
 
-Proyecto de aprendizaje supervisado de Machine Learning
+Proyecto de aprendizaje supervisado de Machine Learning, MUCSI Deusto 2026-27.
 
-**Equipo:**  Katherine Lorenzo, Mauro Cornejo, Jorge Vargas.
+**Equipo:** Jorge Andrés Vargas Cordoba, Katherine Lorenzo Escobar, Mauro Rodrigo Cornejo Pinto
 
 A partir de los datos de ingreso de un animal en el Austin Animal Center, predecir:
 
@@ -21,6 +21,7 @@ data/
   interim/      particiones dev y test (notebook 01)
   processed/    datos limpios (notebook 02)
 notebooks/
+  config.py     semilla común
   01-data-collection-split-and-quality.ipynb
   02-eda-and-cleaning.ipynb
   03-feature-engineering-and-transformation.ipynb
@@ -54,7 +55,8 @@ Seleccionar `.venv` como kernel y ejecutar el notebook 01 para generar `data/int
 
 ## Reglas de trabajo
 
-- En principio cada persona intenta solo editar su notebook.
+- Cada persona edita solo su notebook.
+- `SEED` se importa de `notebooks/config.py` (`from config import SEED`).
 - `test.csv` no se explora, solo se usa en la evaluación final.
 - `data/interim/` y `data/processed/` no se suben, se generan con los notebooks.
 - Antes de cada commit, reiniciar el kernel y ejecutar todo.
