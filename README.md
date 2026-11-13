@@ -21,7 +21,7 @@ data/
   interim/      particiones dev y test (notebook 01)
   processed/    datos limpios (notebook 02)
 notebooks/
-  01-data-collection-and-quality.ipynb
+  01-data-collection-split-and-quality.ipynb
   02-eda-and-cleaning.ipynb
   03-feature-engineering-and-transformation.ipynb
 ```
