@@ -2,13 +2,13 @@
 
 Proyecto de aprendizaje supervisado de Machine Learning, MUCSI Deusto 2026-27.
 
-**Equipo:** Jorge Andrés Vargas Cordoba, Katherine Lorenzo Escobar, Mauro Rodrigo Cornejo Pinto
+**Equipo:** Katherine Lorenzo, Mauro Cornejo, Jorge Vargas
 
 A partir de los datos de ingreso de un animal en el Austin Animal Center, predecir:
 
 | Tarea | Objetivo |
 |---|---|
-| Clasificación | Resultado de salida (`outcome_type`) |
+| Clasificación | Resultado de salida (`outcome_type`): Adoption, Transfer, Return to Owner, Euthanasia, Died, Disposal, Rto-Adopt, Missing, Relocate |
 | Regresión | Días en el refugio (`time_in_shelter_days`) |
 
 Datos: [Austin Animal Center Shelter Intakes and Outcomes (Kaggle)](https://www.kaggle.com/datasets/aaronschlegel/austin-animal-center-shelter-intakes-and-outcomes), en `data/raw/aac_intakes_outcomes.csv`.
@@ -55,7 +55,7 @@ Seleccionar `.venv` como kernel y ejecutar el notebook 01 para generar `data/int
 
 ## Reglas de trabajo
 
-- Cada persona edita solo su notebook.
+- En la medida de lo posible, cada persona edita solo su notebook para evitar conflictos.
 - `SEED` se importa de `notebooks/config.py` (`from config import SEED`).
 - `test.csv` no se explora, solo se usa en la evaluación final.
 - `data/interim/` y `data/processed/` no se suben, se generan con los notebooks.
