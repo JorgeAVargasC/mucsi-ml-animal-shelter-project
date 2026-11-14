@@ -8,8 +8,8 @@ A partir de los datos de ingreso de un animal en el Austin Animal Center, predec
 
 | Tarea | Objetivo |
 |---|---|
-| Clasificación | Resultado de salida (`outcome_type`): Adoption, Transfer, Return to Owner, Euthanasia, Died, Disposal, Rto-Adopt, Missing, Relocate |
-| Regresión | Días en el refugio (`time_in_shelter_days`) |
+| Clasificación | Predicción de adopción (`outcome_type`: binaria agrupando `Adoption` + `Rto-Adopt` frente al resto de salidas, o multiclase según evaluación) |
+| Regresión | Días hasta la adopción (`time_in_shelter_days`, evaluado exclusivamente sobre registros adoptados) |
 
 Datos: [Austin Animal Center Shelter Intakes and Outcomes (Kaggle)](https://www.kaggle.com/datasets/aaronschlegel/austin-animal-center-shelter-intakes-and-outcomes), en `data/raw/aac_intakes_outcomes.csv`.
 
