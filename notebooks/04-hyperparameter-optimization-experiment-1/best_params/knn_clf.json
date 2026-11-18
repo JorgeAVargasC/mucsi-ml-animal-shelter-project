@@ -1,0 +1,56 @@
+{
+  "que_es": "Los mejores ajustes (hiperparámetros) que encontró Optuna para este modelo. El notebook de modelado los usa tal cual.",
+  "modelo": "KNN",
+  "tarea": "clasificación",
+  "mejores_parametros": {
+    "n_neighbors": 19,
+    "weights": "distance",
+    "p": 1
+  },
+  "significado_de_cada_ajuste": {
+    "n_neighbors": "Cuántos animales parecidos se consultan para decidir.",
+    "weights": "uniform: todos los vecinos votan igual. distance: los más parecidos pesan más.",
+    "p": "Cómo se mide la semejanza: 1 suma diferencias (Manhattan), 2 línea recta (euclidiana)."
+  },
+  "resultado_de_la_busqueda": {
+    "metrica": "macro-F1",
+    "valor": 0.5332,
+    "como_leerlo": "Promedio del acierto en cada clase, de 0 a 1. Cuanto más alto, mejor. Cuenta igual a las clases grandes y a las pequeñas. Es el promedio de 5 validaciones en las que los animales de prueba no aparecen en el entrenamiento. Se midió con todos los datos de desarrollo."
+  },
+  "avisos": [],
+  "configuracion": {
+    "pruebas": 20,
+    "semilla": 42,
+    "validacion": "5 grupos, separando los ingresos de cada animal",
+    "fraccion_de_animales_usada": null
+  },
+  "variables_usadas": [
+    "animal_type",
+    "intake_type",
+    "intake_condition",
+    "sex",
+    "weekday",
+    "season",
+    "is_neutered",
+    "is_mix",
+    "is_crossbreed",
+    "is_bicolor",
+    "is_tabby",
+    "has_location_detail",
+    "is_baby",
+    "condition_serious",
+    "age_days",
+    "prior_stays",
+    "hour",
+    "month",
+    "t_months"
+  ],
+  "huella_de_dev_features_sha256": "c6ba99068698c45cd2e6175edb6e9ee04c2c457a115d54ecf65d6ec3670e7f47",
+  "huella_explicacion": "Identifica la versión exacta de dev_features.csv. Si el archivo cambia, hay que repetir la búsqueda.",
+  "fecha": "2026-11-17T10:13:19",
+  "versiones": {
+    "python": "3.15.0",
+    "scikit-learn": "1.9.1",
+    "optuna": "5.0.0"
+  }
+}

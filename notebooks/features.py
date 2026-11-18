@@ -23,6 +23,20 @@ BINARY = ["is_neutered", "is_mix", "is_crossbreed", "is_bicolor", "is_tabby", "h
 NUMERIC = ["age_days", "prior_stays", "hour", "month", "t_months"]
 FEATURES = CAT_LOW + CAT_HIGH + BINARY + NUMERIC
 
+# Experimento 2: edad en logaritmo. No está en dev_features.csv, se calcula con add_age_log()
+NUMERIC_LOG = ["age_log"]
+
+
+def add_age_log(df):
+    """Devuelve una copia de df con age_log = log(1 + age_days).
+
+    La edad tiene cola larga: pocos animales muy viejos dominan las distancias. El logaritmo
+    acerca esos valores, y la diferencia entre 1 y 3 meses pesa como la de 5 y 15 años.
+    """
+    out = df.copy()
+    out["age_log"] = np.log1p(out["age_days"])
+    return out
+
 
 def add_features(df):
     """Devuelve una copia de df con las columnas nuevas. No usa columnas de salida.

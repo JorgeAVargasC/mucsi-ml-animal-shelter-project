@@ -83,7 +83,8 @@ def _caption(fig, text):
 
 def _from_one(axis):
     """Optuna numera las pruebas desde 0; aquí se muestran desde 1, como en el CSV."""
-    axis.set_major_formatter(plt.FuncFormatter(lambda value, _: f"{int(value) + 1}"))
+    axis.set_major_locator(plt.MaxNLocator(integer=True))
+    axis.set_major_formatter(plt.FuncFormatter(lambda value, _: f"{round(value) + 1}"))
 
 
 def _save(fig, path):

@@ -29,6 +29,8 @@ notebooks/
   03-feature-engineering-and-transformation.ipynb
   04-hyperparameter-optimization-experiment-1/   un notebook por modelo, más best_params/, trials/ y figures/
   04-modeling-experiment-1/                      un notebook por modelo
+  04-hyperparameter-optimization-experiment-2/   experimento 2 (por ahora SVM y KNN)
+  04-modeling-experiment-2/
 ```
 
 | Notebook | Entrada | Salida |
@@ -77,6 +79,11 @@ La búsqueda da una sola combinación por modelo, tarea y experimento. Cada arch
 | Solo la evaluación, por ejemplo una métrica | Repetir solo el modelado. |
 
 Todos los modelos usan la misma validación (5 grupos separados por animal), la misma semilla y el mismo número de pruebas, para que se puedan comparar.
+
+| Experimento | Variables | Modelos |
+|---|---|---|
+| 1 | Variables del notebook 03. SVM y KNN sin raza, color ni ciudad | SVM, KNN |
+| 2 | Experimento 1 más raza, color y ciudad, y edad en logaritmo en regresión | SVM, KNN |
 
 ## Setup
 
