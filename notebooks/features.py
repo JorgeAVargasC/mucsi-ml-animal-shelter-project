@@ -96,8 +96,27 @@ def make_targets(df):
     }, index=df.index)
 
 
+# def build_preprocessor(cat_low=CAT_LOW, cat_high=CAT_HIGH, binary=BINARY, numeric=NUMERIC,
+#                        min_frequency=0.01, columns=None):
+#     """Preprocesador sin ajustar. Las categorías con menos del 1 % se agrupan en 'infrequent'.
+
+#     Si se pasa `columns`, solo se usan esas variables.
+#     """
+#     if columns is not None:
+#         cat_low, cat_high, binary, numeric = ([c for c in group if c in columns]
+#                                               for group in (cat_low, cat_high, binary, numeric))
+#     low = OneHotEncoder(handle_unknown="infrequent_if_exist", sparse_output=False)
+#     high = OneHotEncoder(handle_unknown="infrequent_if_exist", min_frequency=min_frequency,
+#                          sparse_output=False)
+#     return ColumnTransformer([
+#         ("cat_low", low, list(cat_low)),
+#         ("cat_high", high, list(cat_high)),
+#         ("num", StandardScaler(), list(numeric)),
+#         ("binary", "passthrough", list(binary)),
+#     ])
+
 def build_preprocessor(cat_low=CAT_LOW, cat_high=CAT_HIGH, binary=BINARY, numeric=NUMERIC,
-                       min_frequency=0.01, columns=None):
+                       min_frequency=0.01, columns=None, numeric_scaler=None):
     """Preprocesador sin ajustar. Las categorías con menos del 1 % se agrupan en 'infrequent'.
 
     Si se pasa `columns`, solo se usan esas variables.
@@ -105,13 +124,17 @@ def build_preprocessor(cat_low=CAT_LOW, cat_high=CAT_HIGH, binary=BINARY, numeri
     if columns is not None:
         cat_low, cat_high, binary, numeric = ([c for c in group if c in columns]
                                               for group in (cat_low, cat_high, binary, numeric))
+
     low = OneHotEncoder(handle_unknown="infrequent_if_exist", sparse_output=False)
     high = OneHotEncoder(handle_unknown="infrequent_if_exist", min_frequency=min_frequency,
                          sparse_output=False)
+
+    if numeric_scaler is None:
+        numeric_scaler = StandardScaler()
+
     return ColumnTransformer([
         ("cat_low", low, list(cat_low)),
         ("cat_high", high, list(cat_high)),
-        ("num", StandardScaler(), list(numeric)),
+        ("num", numeric_scaler, list(numeric)),
         ("binary", "passthrough", list(binary)),
     ])
-
