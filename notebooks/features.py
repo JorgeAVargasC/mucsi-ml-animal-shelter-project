@@ -7,7 +7,10 @@ preprocesador, que se ajusta únicamente con los datos de entrenamiento.
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.model_selection import KFold
+from sklearn.preprocessing import OneHotEncoder, StandardScaler, TargetEncoder
+
+from config import SEED
 
 ADOPTED = ["Adoption", "Rto-Adopt"]
 MAIN_OUTCOMES = ["Transfer", "Return to Owner", "Euthanasia"]
@@ -116,18 +119,26 @@ def make_targets(df):
 #     ])
 
 def build_preprocessor(cat_low=CAT_LOW, cat_high=CAT_HIGH, binary=BINARY, numeric=NUMERIC,
-                       min_frequency=0.01, columns=None, numeric_scaler=None):
+                       min_frequency=0.01, columns=None, numeric_scaler=None, cat_high_encoding="onehot"):
     """Preprocesador sin ajustar. Las categorías con menos del 1 % se agrupan en 'infrequent'.
 
     Si se pasa `columns`, solo se usan esas variables.
+
+    cat_high_encoding="target" (experimento 2 de los árboles): raza, color y ciudad se cambian por el
+    promedio del objetivo en cada categoría, en lugar de one-hot. Así no se pierde ninguna categoría.
+    TargetEncoder lo calcula con validación cruzada interna al entrenar, para no filtrar el objetivo.
+    En clasificación crea una columna por clase y variable (la proporción de cada salida).
     """
     if columns is not None:
         cat_low, cat_high, binary, numeric = ([c for c in group if c in columns]
                                               for group in (cat_low, cat_high, binary, numeric))
 
     low = OneHotEncoder(handle_unknown="infrequent_if_exist", sparse_output=False)
-    high = OneHotEncoder(handle_unknown="infrequent_if_exist", min_frequency=min_frequency,
-                         sparse_output=False)
+    if cat_high_encoding == "target":
+        high = TargetEncoder(target_type="auto", cv=KFold(n_splits=5, shuffle=True, random_state=SEED))
+    else:
+        high = OneHotEncoder(handle_unknown="infrequent_if_exist", min_frequency=min_frequency,
+                             sparse_output=False)
 
     if numeric_scaler is None:
         numeric_scaler = StandardScaler()

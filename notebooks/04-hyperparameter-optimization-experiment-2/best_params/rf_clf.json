@@ -1,0 +1,65 @@
+{
+  "que_es": "Los mejores ajustes (hiperparámetros) que encontró Optuna para este modelo. El notebook de modelado los usa tal cual.",
+  "modelo": "Random forest",
+  "tarea": "clasificación",
+  "mejores_parametros": {
+    "max_depth": 44,
+    "min_samples_leaf": 1,
+    "max_features": 0.610759176702504,
+    "criterion": "entropy",
+    "class_weight": "balanced_subsample"
+  },
+  "significado_de_cada_ajuste": {
+    "max_depth": "Profundidad máxima de cada árbol (alto = más detalle).",
+    "min_samples_leaf": "Mínimo de animales en cada decisión final (alto = más estable).",
+    "max_features": "Fracción de variables que mira cada árbol en cada pregunta.",
+    "criterion": "Cómo mide cada árbol qué tan buena es una pregunta: gini o entropy.",
+    "class_weight": "balanced y balanced_subsample dan más peso a las clases pequeñas."
+  },
+  "resultado_de_la_busqueda": {
+    "metrica": "macro-F1",
+    "valor": 0.5319,
+    "como_leerlo": "Promedio del acierto en cada clase, de 0 a 1. Cuanto más alto, mejor. Cuenta igual a las clases grandes y a las pequeñas. Es el promedio de 5 validaciones en las que los animales de prueba no aparecen en el entrenamiento. Se midió con el 20% de los animales para que fuera rápido, por eso es una referencia para elegir y no el resultado final del modelo."
+  },
+  "avisos": [
+    "El mejor valor de min_samples_leaf (1) está pegado al límite inferior del rango (1). Conviene ampliar el rango hacia abajo y repetir la búsqueda."
+  ],
+  "configuracion": {
+    "pruebas": 20,
+    "semilla": 42,
+    "validacion": "5 grupos, separando los ingresos de cada animal",
+    "fraccion_de_animales_usada": 0.2
+  },
+  "variables_usadas": [
+    "animal_type",
+    "intake_type",
+    "intake_condition",
+    "sex",
+    "weekday",
+    "season",
+    "breed_main",
+    "color_main",
+    "city",
+    "is_neutered",
+    "is_mix",
+    "is_crossbreed",
+    "is_bicolor",
+    "is_tabby",
+    "has_location_detail",
+    "is_baby",
+    "condition_serious",
+    "age_days",
+    "prior_stays",
+    "hour",
+    "month",
+    "t_months"
+  ],
+  "huella_de_dev_features_sha256": "71add06e85d990ea559e7d1612a966a36a1c9bcf11b2e18c935446ee4408ba7b",
+  "huella_explicacion": "Identifica la versión exacta de dev_features.csv. Si el archivo cambia, hay que repetir la búsqueda.",
+  "fecha": "2026-11-22T21:39:19",
+  "versiones": {
+    "python": "3.14.4",
+    "scikit-learn": "1.9.1",
+    "optuna": "5.0.0"
+  }
+}
