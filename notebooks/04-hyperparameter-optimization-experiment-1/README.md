@@ -72,7 +72,7 @@ Siempre que cambie algo de lo que entra al modelo:
 - `dev_features.csv` (por ejemplo, al volver a ejecutar el notebook 03 con cambios),
 - el objetivo.
 
-El notebook de modelado lo comprueba y se detiene con un mensaje si algo no coincide. Un cambio así es un experimento nuevo: se crean las carpetas del experimento 2 y se deja intacto el 1 para poder comparar.
+El notebook de modelado solo comprueba que las variables coincidan con las de la búsqueda, y se detiene con un mensaje si no es así. Un cambio así es un experimento nuevo: se crean las carpetas del experimento 2 y se deja intacto el 1 para poder comparar.
 
 ## Cómo se ejecuta
 

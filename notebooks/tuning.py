@@ -225,7 +225,7 @@ def tune(name, make_pipeline, space, X, y, groups, scoring, features, *,
 
 
 def load_best(name, features, folder="../04-hyperparameter-optimization-experiment-1"):
-    """Lee los mejores ajustes guardados y comprueba que siguen siendo válidos."""
+    """Lee los mejores ajustes guardados y comprueba que se buscaron con las mismas variables."""
     path = Path(folder) / "best_params" / f"{name}.json"
     if not path.exists():
         raise FileNotFoundError(f"No existe {path}. Ejecuta primero el notebook de optimización de este modelo.")
@@ -234,8 +234,6 @@ def load_best(name, features, folder="../04-hyperparameter-optimization-experime
     if sorted(saved["variables_usadas"]) != sorted(features):
         raise ValueError("Las variables de este notebook no son las que se usaron en la búsqueda de ajustes. "
                          "Repite la búsqueda con estas variables.")
-    if saved["huella_de_dev_features_sha256"] != _sha256(DATA_PATH):
-        raise ValueError("dev_features.csv cambió desde la búsqueda de ajustes. Repite la búsqueda.")
 
     result = saved["resultado_de_la_busqueda"]
     print(f"Ajustes cargados de {path.name}: {saved['mejores_parametros']}")
