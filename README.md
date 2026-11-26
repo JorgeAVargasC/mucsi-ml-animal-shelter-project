@@ -1,113 +1,66 @@
-# mucsi-ml-animal-shelter-project
+# Guía de ejecución del proyecto
 
-Proyecto de aprendizaje supervisado de Machine Learning, MUCSI Deusto 2026-27.
+## 1. Introducción
 
-**Equipo:** Katherine Lorenzo, Mauro Cornejo, Jorge Vargas
+Proyecto de aprendizaje supervisado de Machine Learning de **MUCSI Deusto 2026-27**, desarrollado por **Katherine Lorenzo, Mauro Cornejo y Jorge Vargas**.
 
-A partir de los datos de ingreso de un animal en el Austin Animal Center, predecir:
+Utiliza datos de ingresos y salidas del Austin Animal Center para resolver dos tareas:
 
-| Tarea | Objetivo |
-|---|---|
-| Clasificación | Resultado de salida (`outcome_type`, multiclase: `Adoption` (incluye `Rto-Adopt`), `Transfer`, `Return to Owner`, `Euthanasia` y `Other`) |
-| Regresión | Días hasta la adopción (`time_in_shelter_days`, evaluado exclusivamente sobre registros adoptados) |
+- **Clasificación:** predecir el resultado de salida del animal (`outcome_type`).
+- **Regresión:** estimar los días que un animal adoptado pasa en el refugio (`time_in_shelter_days`).
 
-Datos: [Austin Animal Center Shelter Intakes and Outcomes (Kaggle)](https://www.kaggle.com/datasets/aaronschlegel/austin-animal-center-shelter-intakes-and-outcomes), en `data/raw/aac_intakes_outcomes.csv`.
+Esta guía explica dónde están los archivos principales y cómo reproducir el flujo final. El modelo elegido para esa ejecución es **Random Forest**, tanto para clasificación como para regresión.
 
-## Estructura
+El dataset original puede obtenerse de [Austin Animal Center Shelter Intakes and Outcomes](https://www.kaggle.com/datasets/aaronschlegel/austin-animal-center-shelter-intakes-and-outcomes) y debe estar en `data/raw/aac_intakes_outcomes.csv`.
 
-```
-data/
-  raw/          dataset original
-  interim/      particiones dev y test (notebook 01)
-  processed/    datos limpios de dev y de test (notebook 02) y variables de dev (03)
-results/
-  cross-validation-results.md resumen de la validación cruzada de todos los modelos
-  test-final-results.md       resultados finales del modelo elegido en test
-  models/       modelos finales (notebook 05)
-notebooks/
-  config.py     semilla común
-  features.py   variables nuevas y preprocesador (notebook 03)
-  tuning.py     búsqueda de hiperparámetros con Optuna (notebooks 04)
-  01-data-collection-split-and-quality.ipynb
-  02-eda-and-cleaning.ipynb
-  03-feature-engineering-and-transformation.ipynb
-  04-hyperparameter-optimization-experiment-1/   un notebook por modelo, más best_params/, trials/ y figures/
-  04-modeling-experiment-1/                      un notebook por modelo
-  04-hyperparameter-optimization-experiment-2/   experimento 2 (por ahora SVM y KNN)
-  04-modeling-experiment-2/
-  05-final-training-and-test.ipynb
-```
+## 2. Cómo está organizado el repositorio
 
-| Notebook | Entrada | Salida |
-|---|---|---|
-| 01 Recolección y calidad del dato | `data/raw/` | `data/interim/dev.csv`, `data/interim/test.csv` |
-| 02 EDA y limpieza | `data/interim/dev.csv` y `test.csv` | `data/processed/austin_animal_center_clean.csv` y `austin_animal_center_clean_test.csv` |
-| 03 Ingeniería de características y transformación | `data/processed/` | `data/processed/dev_features.csv` y `build_preprocessor` (en `notebooks/features.py`) |
-| 05 Entrenamiento final y evaluación en test | `dev_features.csv`, `austin_animal_center_clean_test.csv` y `best_params/` del experimento 1 | `results/models/` |
+- [`data/raw/`](data/raw/): dataset original de Austin Animal Center.
+- [`data/interim/`](data/interim/): particiones de desarrollo y test que genera el notebook 01.
+- [`data/processed/`](data/processed/): datos limpios del notebook 02 y variables preparadas por el notebook 03.
+- [`notebooks/`](notebooks/): flujo de preparación y entrenamiento, experimentos comparativos y funciones compartidas (`features.py`, `tuning.py` y `config.py`).
+- [`results/`](results/): documentación de la validación cruzada y la evaluación final, además de los modelos serializados.
 
-## Resultados
+Los archivos de `data/interim/` y `data/processed/` están excluidos de Git. Se crean al ejecutar los notebooks, por lo que no se debe esperar que estén presentes en una copia limpia del repositorio.
 
-La comparación de todos los modelos en validación cruzada está en [`results/cross-validation-results.md`](results/cross-validation-results.md) y los resultados finales en test en [`results/test-final-results.md`](results/test-final-results.md). El **random forest** es el mejor en clasificación y en regresión, en los dos experimentos.
+## 3. Qué se probó y por qué se eligió Random Forest
 
-Modelo final: random forest con la configuración del experimento 1 en las dos tareas, entrenado con todo dev y evaluado una sola vez en test (notebook 05). Los hiperparámetros son los de la búsqueda del experimento 1, con `n_estimators=200` como en la validación. Limitación: la búsqueda se hizo con el 20 % de los animales.
+Durante el proyecto se compararon varios modelos mediante validación cruzada. Se hicieron dos experimentos de optimización y evaluación; sus resultados completos se resumen en [`results/cross-validation-results.md`](results/cross-validation-results.md).
 
-## Experimentos (paso 04)
+Random Forest fue el mejor modelo en clasificación en ambos experimentos. En el experimento 1 obtuvo macro-F1 **0,576**, frente a **0,566** en el experimento 2. En regresión, el experimento 2 obtuvo un R² en log algo mayor (**0,431** frente a **0,413**), pero el experimento 1 tuvo un MAE ligeramente menor (**18,556** frente a **18,615 días**). Para mantener la misma configuración de variables en las dos tareas, el modelo final utiliza Random Forest con los ajustes del experimento 1.
 
-Un **experimento** es un conjunto de variables de entrada con dos pasos: primero se buscan los mejores ajustes (hiperparámetros) de cada modelo y después se evalúa cada modelo con esos ajustes. Los dos pasos usan las mismas variables, por eso comparten el número de experimento.
+En la búsqueda de hiperparámetros de Random Forest se probaron 20 configuraciones con Optuna y una muestra del 20 % de los animales. La comparación de modelos usa validación cruzada de cinco grupos, separados por animal. Los notebooks están en las carpetas de [optimización del experimento 1](notebooks/04-hyperparameter-optimization-experiment-1/) y [experimento 2](notebooks/04-hyperparameter-optimization-experiment-2/), y de [modelado del experimento 1](notebooks/04-modeling-experiment-1/) y [experimento 2](notebooks/04-modeling-experiment-2/). Este trabajo forma parte del desarrollo, pero **no es necesario volver a ejecutar esos experimentos** para reproducir el pipeline final: los parámetros de Random Forest del experimento 1 ya están guardados y el notebook final los carga.
+
+El siguiente esquema distingue el flujo de preparación, la fase experimental y la ejecución final. La fase experimental ya se realizó; para reproducir el resultado final se ejecutan los pasos 01, 02, 03 y 05.
 
 ```mermaid
 flowchart TD
-    A["01 Recolección y partición<br/>data/raw → dev.csv y test.csv"] --> B["02 EDA y limpieza<br/>→ austin_animal_center_clean.csv"]
-    B --> C["03 Variables y objetivos<br/>→ dev_features.csv y features.py"]
+    A["01 · Partición<br/>datos originales → desarrollo y test"] --> B["02 · Limpieza<br/>datos limpios de desarrollo y test"]
+    B --> C["03 · Variables<br/>dev_features.csv"]
+    C --> F["05 · Entrenamiento final<br/>Random Forest + evaluación en test"]
     C --> D
-    subgraph EXP["Experimento N: mismas variables en los dos pasos"]
-        D["04 Optimización de hiperparámetros con Optuna<br/>un notebook por modelo"]
-        D -->|"best_params/*.json<br/>trials/*.csv<br/>figures/*.png"| E["04 Modelado<br/>un notebook por modelo"]
+    subgraph EXP["Fase experimental ya realizada"]
+        D["Optimización de hiperparámetros<br/>Optuna"] --> E["Modelado de cada alternativa"]
+        E --> G["Validación cruzada<br/>comparación y selección"]
     end
-    E --> F["Resultados de validación cruzada<br/>macro-F1 · R² · MAE"]
-    F --> G["Comparación entre modelos<br/>y elección"]
-    G --> H["Evaluación final con test.csv"]
+    G --> F
 ```
 
-Cómo se busca y se evalúa un modelo:
+En el flujo final, el paso 05 usa la configuración seleccionada y guardada; no vuelve a ejecutar las búsquedas ni los notebooks de modelado experimental.
 
-```mermaid
-flowchart LR
-    A["dev_features.csv"] --> B["Submuestra<br/>20 % de los animales<br/>(solo modelos lentos)"]
-    B --> C["Optuna propone<br/>una combinación de ajustes"]
-    C --> D["Se entrena y valida 5 veces,<br/>separando por animal"]
-    D --> E["Resultado de la prueba<br/>macro-F1 o R²"]
-    E -->|"se repite 20 veces"| C
-    E --> F["Mejor combinación<br/>→ best_params/modelo_tarea.json"]
-    F --> G["Modelado: se evalúa<br/>con todos los datos"]
-```
+## 4. Preparar el entorno
 
-La búsqueda da una sola combinación por modelo, tarea y experimento. Cada archivo y cada gráfica que genera está explicado en [`README.md`](notebooks/04-hyperparameter-optimization-experiment-1/README.md).
+Se necesita Python y las dependencias indicadas en [`requirements.txt`](requirements.txt). Desde la raíz del repositorio, crea y activa el entorno virtual e instala los paquetes.
 
-| Si cambia... | Qué hacer |
-|---|---|
-| Las variables de entrada o el objetivo | Crear un experimento nuevo (por ejemplo el 2): repetir la optimización y el modelado. El experimento 1 se deja intacto para comparar. |
-| `dev_features.csv`, por ejemplo al ejecutar el notebook 03 con cambios | Repetir la optimización y el modelado. |
-| Solo la evaluación, por ejemplo una métrica | Repetir solo el modelado. |
+**Windows (PowerShell):**
 
-Todos los modelos usan la misma validación (5 grupos separados por animal), la misma semilla y el mismo número de pruebas, para que se puedan comparar.
-
-| Experimento | Variables | Modelos |
-|---|---|---|
-| 1 | Variables del notebook 03. SVM y KNN sin raza, color ni ciudad | SVM, KNN |
-| 2 | Experimento 1 más raza, color y ciudad, y edad en logaritmo en regresión | SVM, KNN |
-
-## Setup
-
-**Windows**
-
-```bash
+```powershell
 python -m venv .venv
-.venv\Scripts\activate
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-**macOS**
+**macOS / Linux:**
 
 ```bash
 python3 -m venv .venv
@@ -115,13 +68,42 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Seleccionar `.venv` como kernel y ejecutar el notebook 01 para generar `data/interim/`.
+Después, abre los notebooks en un entorno compatible con Jupyter y selecciona `.venv` como kernel. Los notebooks utilizan rutas relativas a la carpeta `notebooks/`; ejecútalos desde el propio notebook y en el orden indicado abajo.
 
-## Reglas de trabajo
+Antes de empezar, comprueba que está disponible `data/raw/aac_intakes_outcomes.csv`. Si no está, descarga el dataset de Austin Animal Center enlazado en la introducción y coloca el archivo en esa ruta. Las carpetas de datos intermedios y procesados se generan durante la ejecución.
 
-- En la medida de lo posible, cada persona edita solo su notebook para evitar conflictos.
-- `SEED` se importa de `notebooks/config.py` (`from config import SEED`).
-- `test.csv` no se explora: el notebook 02 solo lo limpia y el 05 lo evalúa una sola vez.
-- `data/interim/` y `data/processed/` no se suben, se generan con los notebooks. Los modelos de `results/models/` sí se suben, comprimidos para que cada archivo pese menos de 100 MB.
-- Orden de ejecución: 01, 02, 03, 04 (el experimento que se use) y 05.
-- Antes de cada commit, reiniciar el kernel y ejecutar todo.
+## 5. Ejecutar el pipeline final
+
+Ejecuta todas las celdas de cada notebook, de principio a fin, en este orden. No ejecutes los notebooks de modelado u optimización del paso 04 para obtener el resultado final.
+
+| Orden | Notebook | Qué hace y qué produce |
+|---|---|---|
+| 1 | [`01-data-collection-split-and-quality.ipynb`](notebooks/01-data-collection-split-and-quality.ipynb) | Lee el CSV original y separa los animales en desarrollo y test (80/20), agrupando por identificador para que el mismo animal no aparezca en ambos conjuntos. Genera `data/interim/dev.csv` y `data/interim/test.csv`. |
+| 2 | [`02-eda-and-cleaning.ipynb`](notebooks/02-eda-and-cleaning.ipynb) | Limpia los datos de desarrollo y aplica los mismos pasos de limpieza a test, sin explorarlo. Genera `data/processed/austin_animal_center_clean.csv` y `data/processed/austin_animal_center_clean_test.csv`. |
+| 3 | [`03-feature-engineering-and-transformation.ipynb`](notebooks/03-feature-engineering-and-transformation.ipynb) | Crea variables a partir de la información disponible al ingreso y prepara los objetivos de clasificación y regresión. Guarda `data/processed/dev_features.csv`. La definición compartida de las variables y del preprocesador está en [`features.py`](notebooks/features.py). |
+| 4 | [`05-final-training-and-test.ipynb`](notebooks/05-final-training-and-test.ipynb) | Carga las variables de desarrollo y el test limpio, reconstruye las variables de test con las mismas funciones, carga los parámetros `rf_clf` y `rf_reg` del experimento 1, entrena ambos Random Forest con todo el conjunto de desarrollo y 200 árboles por modelo, y evalúa test una sola vez. Guarda `results/models/model_clf.joblib` y `results/models/model_reg.joblib`. |
+
+El notebook 05 requiere los archivos [`rf_clf.json`](notebooks/04-hyperparameter-optimization-experiment-1/best_params/rf_clf.json) y [`rf_reg.json`](notebooks/04-hyperparameter-optimization-experiment-1/best_params/rf_reg.json) de [`best_params/`](notebooks/04-hyperparameter-optimization-experiment-1/best_params/). En este repositorio están guardados; por eso no hay que volver a ejecutar Optuna. Si se modifican los datos o las variables, los parámetros podrían dejar de corresponder a la búsqueda documentada.
+
+
+## 6. Resultados esperados y comprobación
+
+Al completar el notebook 05, se muestran las métricas de clasificación y regresión y se guardan los dos modelos en `results/models/`. Las métricas también están resumidas en [`results/test-final-results.md`](results/test-final-results.md); no se genera en este flujo un archivo de métricas independiente.
+
+Los valores documentados en test son:
+
+- **Clasificación:** macro-F1 **0,578**.
+- **Regresión:** R² **0,412** (calculado sobre el logaritmo de los días) y MAE **18,393 días**.
+
+La regresión se evalúa únicamente sobre animales adoptados. El MAE se expresa en días; el R² se calcula sobre el objetivo transformado a logaritmo. Para comprobar que la ejecución terminó correctamente, confirma que el notebook muestra métricas para ambas tareas y que se han creado `model_clf.joblib` y `model_reg.joblib` en `results/models/`. Los resultados deben ser coherentes con los valores anteriores; las versiones de las dependencias y los datos pueden afectar a una reproducción.
+
+## 7. Documentación Anexa
+
+- [Resultados de validación cruzada](results/cross-validation-results.md)
+- [Resultados finales en test](results/test-final-results.md)
+- Notebooks de [optimización del experimento 1](notebooks/04-hyperparameter-optimization-experiment-1/) y [experimento 2](notebooks/04-hyperparameter-optimization-experiment-2/)
+- Notebooks de [modelado del experimento 1](notebooks/04-modeling-experiment-1/) y [experimento 2](notebooks/04-modeling-experiment-2/)
+- [Random Forest: modelado del experimento 1](notebooks/04-modeling-experiment-1/04.1-random-forest.ipynb)
+- [Random Forest: modelado del experimento 2](notebooks/04-modeling-experiment-2/04.2-random-forest.ipynb)
+- [Funciones de variables y preprocesamiento](notebooks/features.py)
+- [Búsqueda y carga de hiperparámetros](notebooks/tuning.py)
