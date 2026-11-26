@@ -9,6 +9,8 @@ Utiliza datos de ingresos y salidas del Austin Animal Center para resolver dos t
 - **Clasificación:** predecir el resultado de salida del animal (`outcome_type`).
 - **Regresión:** estimar los días que un animal adoptado pasa en el refugio (`time_in_shelter_days`).
 
+Repositorio original en GitHub: [mucsi-ml-animal-shelter-project](https://github.com/JorgeAVargasC/mucsi-ml-animal-shelter-project).
+
 Esta guía explica dónde están los archivos principales y cómo reproducir el flujo final. El modelo elegido para esa ejecución es **Random Forest**, tanto para clasificación como para regresión.
 
 El dataset original puede obtenerse de [Austin Animal Center Shelter Intakes and Outcomes](https://www.kaggle.com/datasets/aaronschlegel/austin-animal-center-shelter-intakes-and-outcomes) y debe estar en `data/raw/aac_intakes_outcomes.csv`.
